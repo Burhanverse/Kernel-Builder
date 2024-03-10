@@ -39,10 +39,10 @@ jobs:
         echo "ENABLE_CCACHE=$(cat $CONFIG_ENV | grep -w "ENABLE_CCACHE" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
         echo "NEED_DTBO=$(cat $CONFIG_ENV | grep -w "NEED_DTBO" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
 
-    - name: Set swap to 10G
+    - name: Set swap to 16G
       uses: pierotofy/set-swap-space@master
       with:
-        swap-size-gb: 12
+        swap-size-gb: 16
 
     - name: Setup build kernel environment
       run: |
@@ -52,12 +52,14 @@ jobs:
         sudo apt-get install git ccache automake flex lzop bison gperf build-essential zip curl zlib1g-dev g++-multilib libxml2-utils bzip2 libbz2-dev libbz2-1.0 libghc-bzlib-dev squashfs-tools pngcrush schedtool dpkg-dev liblz4-tool make optipng maven libssl-dev pwgen libswitch-perl policycoreutils minicom libxml-sax-base-perl libxml-simple-perl bc libc6-dev-i386 lib32ncurses5-dev libx11-dev lib32z-dev libgl1-mesa-dev xsltproc unzip device-tree-compiler python2 python3 zstd
         mkdir -p $GITHUB_WORKSPACE/kernel_workspace
 
-    - name: Download ZyC-Clang
+    - name: Fetch & download latest ZyC-Clang
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
         mkdir clang-aosp
-        wget https://github.com/ZyCromerZ/Clang/releases/download/19.0.0git-20240223-release/Clang-19.0.0git-20240223.tar.gz
-        tar -C clang-aosp/ -zxvf Clang-19.0.0git-20240223.tar.gz
+        LATEST_RELEASE_INFO=$(curl -s https://api.github.com/repos/ZyCromerZ/Clang/releases/latest)
+        TARBALL_URL=$(echo "$LATEST_RELEASE_INFO" | jq -r '.assets[0].browser_download_url')
+        wget -O clang-latest.tar.gz "$TARBALL_URL"
+        tar -C clang-aosp/ -zxvf clang-latest.tar.gz
 
     - name: Download GCC-AOSP
       run: |
@@ -85,13 +87,7 @@ jobs:
         else
           echo "LOCALVERSION=" >> $GITHUB_ENV
         fi
-
-    - name: KernelSU Patch
-      run: |
-        cd $GITHUB_WORKSPACE/kernel_workspace
-        cd android-kernel
-        echo -e "${color}Patching Kernel for KernelSU...${end}"
-        curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
+        
     - name: Setup Configuration for Kernel
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
