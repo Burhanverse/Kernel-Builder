@@ -87,7 +87,7 @@ jobs:
         else
           echo "LOCALVERSION=" >> $GITHUB_ENV
         fi
-        
+
     - name: Setup Configuration for Kernel
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
@@ -106,7 +106,7 @@ jobs:
       uses: hendrikmuhs/ccache-action@v1.2
       with:
         key: build-kernel-${{ env.DEVICE }}${{ env.LOCALVERSION }}${{ env.UPLOADNAME }}
-        max-size: 2G
+        max-size: 4G
 
     - name: Build kernel
       run: |
@@ -204,7 +204,7 @@ jobs:
         tag_name: ${{ env.RELEASE_TAG }} # Ensure this env variable is set to your desired tag name
         name: Release ${{ env.RELEASE_TAG }}
         body: Description of the release
-        files: kernel_workspace/AnyKernel3/*
+        files: kernel_workspace/AnyKernel3/*.zip
         draft: false
         prerelease: false
       env:
