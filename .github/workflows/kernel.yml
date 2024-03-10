@@ -88,6 +88,13 @@ jobs:
           echo "LOCALVERSION=" >> $GITHUB_ENV
         fi
 
+    - name: KernelSU Patch
+      run: |
+        cd $GITHUB_WORKSPACE/kernel_workspace
+        cd android-kernel
+        echo -e "${color}Patching Kernel for KernelSU...${end}"
+        curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
+        
     - name: Setup Configuration for Kernel
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
@@ -201,8 +208,8 @@ jobs:
       if: env.CHECK_FILE_IS_OK == 'true'
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: ${{ env.RELEASE_TAG }} # Ensure this env variable is set to your desired tag name
-        name: Release ${{ env.RELEASE_TAG }}
+        tag_name: ${{ github.run_id }}
+        name: BlackSapphire ${{ github.run_id }}
         body: Description of the release
         files: kernel_workspace/AnyKernel3/*.zip
         draft: false
