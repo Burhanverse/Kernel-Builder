@@ -94,7 +94,7 @@ jobs:
         cd android-kernel
         echo -e "${color}Patching Kernel for KernelSU...${end}"
         curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
-        
+
     - name: Setup Configuration for Kernel
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
@@ -211,7 +211,9 @@ jobs:
         tag_name: ${{ github.run_id }}
         name: BlackSapphire ${{ github.run_id }}
         body: Description of the release
-        files: kernel_workspace/AnyKernel3/*.zip
+        files: |
+              kernel_workspace/BlackSapphire${{ env.LOCALVERSION }}${{ env.UPLOADNAME }}-${{ env.DEVICE }}-${{ env.BUILD_TIME }}.zip
+              kernel_workspace/AnyKernel3/*.zip
         draft: false
         prerelease: false
       env:
