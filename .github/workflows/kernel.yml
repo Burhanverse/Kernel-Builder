@@ -56,10 +56,8 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
         mkdir clang-aosp
-        LATEST_RELEASE_INFO=$(curl -s https://api.github.com/repos/ZyCromerZ/Clang/releases/latest)
-        TARBALL_URL=$(echo "$LATEST_RELEASE_INFO" | jq -r '.assets[0].browser_download_url')
-        wget -O clang-latest.tar.gz "$TARBALL_URL"
-        tar -C clang-aosp/ -zxvf clang-latest.tar.gz
+        wget https://github.com/kdrag0n/proton-clang/archive/refs/tags/20210522.tar.gz
+        tar -C clang-aosp/ -zxvf 20210522.tar.gz
 
     - name: Download GCC-AOSP
       run: |
