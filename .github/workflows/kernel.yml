@@ -4,9 +4,6 @@ on:
   schedule:
     - cron: '50 7 * * *'
     
-  watch:
-    types: [started]
-
   workflow_dispatch:
 
 jobs:
@@ -20,6 +17,9 @@ jobs:
       CCACHE_HARDLINK: "true"
     steps:
     - uses: actions/checkout@v4
+      with: 
+         ref: lancelot
+        
     - name: Prepare Configuration
       run: |
         CONFIG_ENV=$(cat config.env | grep -w "CONFIG_ENV" | head -n 1 | cut -d "=" -f 2)
@@ -81,7 +81,7 @@ jobs:
     - name: Download kernel source
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
-        git clone https://gitlab.com/MT6768Lab/KernelTree.git -b 13-stable android-kernel --depth=1
+        git clone https://gitlab.com/MT6768Lab/KernelTree.git -b 13 android-kernel --depth=1
         if [[ ${{ env.ADD_LOCALVERSION_TO_FILENAME }} == 'true' ]]; then
           echo "LOCALVERSION=$(cat android-kernel/localversion)" >> $GITHUB_ENV
         else
