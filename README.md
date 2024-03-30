@@ -1,27 +1,11 @@
 # KERNEL BUILDER
-## Usage
-
-> After successful build, it will upload AnyKernel3 in `Action`, which has turned off device check, please flash to phone in Twrp.
-
-First confirm that you have all the required patches for `KernelSU` to work. Then fork this repository to your repository and edit config.env as follows, then click `Star` or `Action`, you will see `Build Kernel` option on the left side, click it and you will see `Run workflows` on the top of the big dialog box on the right side, click it and it will start the build.
-
 ### Kernel Source
-
-Type your kernel link
-
-e.g. https://github.com/begonia-dev/android_kernel_xiaomi_mt6785
-
-### Kernel Source Branch
-
-Type your kernel branch
-
-e.g. 13.0
+The kernel source is hardcoded into the workflow script instead of .env
 
 ### Kernel defconfig
-
 Type your kernel defconfig
 
-e.g. begonia_user_defconfig
+e.g. lancelot_defconfig
 
 ### Kernel file
 
@@ -31,7 +15,7 @@ e.g. Image.gz-dtb
 
 ### Clang version
 
-The default version is zyc clang19.0.0, if you need to change it, do it so by editing the kernel.yml (DON'T EDIT THE CLANG IN `CONFIG.ENV`)
+The script fetches the latest ZyC Clang, if you need to change it, do it so by editing the kernel.yml (DON'T EDIT THE CLANG IN `CONFIG.ENV`)
 
 
 ### Use overlayfs
