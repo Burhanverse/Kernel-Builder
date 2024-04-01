@@ -1,9 +1,6 @@
 name: Kernel Builder
 
-on:
-  schedule:
-    - cron: '30 17 * * *'
-    
+on: 
   workflow_dispatch:
 
 jobs:
@@ -81,25 +78,13 @@ jobs:
     - name: Download kernel source
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
-        git clone https://gitlab.com/MT6768Lab/KernelTree.git -b 13 android-kernel --depth=1
+        git clone https://github.com/Burhanverse/Kernel.git -b 13 android-kernel --depth=1
         if [[ ${{ env.ADD_LOCALVERSION_TO_FILENAME }} == 'true' ]]; then
           echo "LOCALVERSION=$(cat android-kernel/localversion)" >> $GITHUB_ENV
         else
           echo "LOCALVERSION=" >> $GITHUB_ENV
         fi
 
-    - name: KernelSU Patch
-      run: |
-        cd $GITHUB_WORKSPACE/kernel_workspace
-        cd android-kernel
-        echo -e "${color}Patching Kernel for KernelSU...${end}"
-        curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
-        if grep -q CONFIG_KSU= arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}; then
-            sed -i 's/# CONFIG_KSU is not set/CONFIG_KSU=y/' arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
-            sed -i 's/CONFIG_KSU=n/CONFIG_KSU=y/' arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
-            else
-            echo "CONFIG_KSU=y" >> arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
-        fi
     - name: Setup Configuration for Kernel
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
@@ -189,8 +174,8 @@ jobs:
         fi
         rm -rf AnyKernel3/.git* AnyKernel3/README.md
         cd AnyKernel3/
-          zip -q -r "Black-[ZyC]${{ env.LOCALVERSION }}${{ env.UPLOADNAME }}-${{ env.DEVICE }}-${{ env.BUILD_TIME }}.zip" *
-          mv Black-[ZyC]${{ env.LOCALVERSION }}${{ env.UPLOADNAME }}-${{ env.DEVICE }}-${{ env.BUILD_TIME }}.zip $GITHUB_WORKSPACE/kernel_workspace/Noir-[ZyC]${{ env.LOCALVERSION }}${{ env.UPLOADNAME }}-${{ env.DEVICE }}-${{ env.BUILD_TIME }}.zip
+          zip -q -r "Necromancer-[ZyC]${{ env.LOCALVERSION }}${{ env.UPLOADNAME }}-${{ env.DEVICE }}-${{ env.BUILD_TIME }}.zip" *
+          mv Necromancer-[ZyC]${{ env.LOCALVERSION }}${{ env.UPLOADNAME }}-${{ env.DEVICE }}-${{ env.BUILD_TIME }}.zip $GITHUB_WORKSPACE/kernel_workspace/Necromancer-[ZyC]${{ env.LOCALVERSION }}${{ env.UPLOADNAME }}-${{ env.DEVICE }}-${{ env.BUILD_TIME }}.zip
     
     - name: Upload ${{ env.KERNEL_IMAGE_NAME }}
       if: env.CHECK_FILE_IS_OK == 'true'
@@ -212,6 +197,6 @@ jobs:
       if: env.CHECK_FILE_IS_OK == 'true'
       uses: actions/upload-artifact@v4
       with:
-        name: Black-[ZyC]${{ env.LOCALVERSION }}${{ env.UPLOADNAME }}-${{ env.DEVICE }}-${{ env.BUILD_TIME }}
+        name: Necromancer-[ZyC]${{ env.LOCALVERSION }}${{ env.UPLOADNAME }}-${{ env.DEVICE }}-${{ env.BUILD_TIME }}
         path: kernel_workspace/AnyKernel3/*
          
