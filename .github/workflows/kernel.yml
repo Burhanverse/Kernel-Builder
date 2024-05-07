@@ -102,6 +102,7 @@ jobs:
     - name: Setup Configuration for Kernel
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
+        git revert --no-edit b23b0e7bcaf7c39c0925e65b12b8b50815d90b94
         if [ ${{ env.DISABLE-LTO }} = true ]; then
             sed -i 's/^CONFIG_LOCALVERSION=".*"/CONFIG_LOCALVERSION="-BlackSapphire"/' arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
             sed -i 's/CONFIG_LTO=y/CONFIG_LTO=n/' arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
