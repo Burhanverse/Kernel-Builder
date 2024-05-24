@@ -1,9 +1,6 @@
-name: Kernel Builder
+name: Kernel Test 
 
 on:
-  schedule:
-    - cron: '0 18 * * 5'
-    
   workflow_dispatch:
 
 jobs:
@@ -80,33 +77,20 @@ jobs:
     - name: Download kernel source
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
-        git clone https://gitlab.com/MT6768Lab/KernelTree.git -b 13 android-kernel 
+        git clone https://github.com/Burhanverse/kernel.git -b upstream-4.14 android-kernel 
         if [[ ${{ env.ADD_LOCALVERSION_TO_FILENAME }} == 'true' ]]; then
           echo "LOCALVERSION=$(cat android-kernel/localversion)" >> $GITHUB_ENV
         else
           echo "LOCALVERSION=" >> $GITHUB_ENV
         fi
 
-    - name: KernelSU Patch
-      run: |
-        cd $GITHUB_WORKSPACE/kernel_workspace
-        cd android-kernel
-        echo -e "${color}Patching Kernel for KernelSU...${end}"
-        curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
-        if grep -q CONFIG_KSU= arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}; then
-            sed -i 's/# CONFIG_KSU is not set/CONFIG_KSU=y/' arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
-            sed -i 's/CONFIG_KSU=n/CONFIG_KSU=y/' arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
-            else
-            echo "CONFIG_KSU=y" >> arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
-        fi
     - name: Setup Configuration for Kernel
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
         git config --global user.email "burhanverse@gmail.com"
         git config --global user.name "Aqua"
-        git revert --no-edit b23b0e7bcaf7c39c0925e65b12b8b50815d90b94
+        sed -i 's/^CONFIG_LOCALVERSION=".*"/CONFIG_LOCALVERSION="-Black"/' arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
         if [ ${{ env.DISABLE-LTO }} = true ]; then
-            sed -i 's/^CONFIG_LOCALVERSION=".*"/CONFIG_LOCALVERSION="-BlackSapphire"/' arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
             sed -i 's/CONFIG_LTO=y/CONFIG_LTO=n/' arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
             sed -i 's/CONFIG_LTO_CLANG=y/CONFIG_LTO_CLANG=n/' arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
             sed -i 's/CONFIG_THINLTO=y/CONFIG_THINLTO=n/' arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
